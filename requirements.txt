@@ -1,2 +1,8 @@
-nose
-sphinx
+
+speech_recognition
+pyttsx3
+wikipedia
+webbrowser
+ecapture
+wolframalpha
+requests

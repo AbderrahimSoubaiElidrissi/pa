@@ -1,5 +1,10 @@
 import pyttsx3
 import speech_recognition as sr
+import wikipedia
+import os
+import time
+import subprocess
+import webbrowser
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
@@ -42,7 +47,7 @@ def listen():
     except sr.RequestError as c:
         print('Request results from Google Speech Recognition service error')
 
-    return data
+    return data.lower()
 
 def greeting(text):
     Greeting_Inputs = ['hi', 'hey','hello']
@@ -58,6 +63,19 @@ def goodbye(text):
             return "Shutting down,Good bye"
     return ''
 
+def searchWikipedia(text):
+    statement = text.replace("search", "")
+    statement =statement.replace("wiki", "")
+    statement =statement.replace("wikipedia", "")
+
+    try:
+        results = wikipedia.summary(statement, sentences=3)
+    except Exception as e:
+        log(e)
+        results = ''
+    
+    return "According to Wikipedia " + results
+
 def log(text):
     print("LOG: "+ text)
 
@@ -70,6 +88,8 @@ while True:
 
     if text == '': 
         continue
+        time.sleep(2)
+
     elif greeting(text) != '':
         log('Greeting')
         responses = greeting(text)
@@ -77,12 +97,28 @@ while True:
     elif goodbye(text) != '':
         log('Shutting down')
         responses = goodbye(text)
+
+    elif 'open youtube' in text:
+        webbrowser.open_new_tab("https://www.youtube.com")
+        speak("youtube is open now")
+
+    elif 'open google' in text:
+        webbrowser.open_new_tab("https://www.google.com")
+        speak("Google chrome is open now")
+
+    elif 'open gmail' in text:
+        webbrowser.open_new_tab("gmail.com")
+        speak("Google Mail open now")
+    elif text in ['wiki','wikipedia','search']:
+        log('Wikipedia Searching: ' + text)
+        responses = searchWikipedia(text)
         
-    elif 'date' in text:
+    elif 'date' == text:
         log('Getting date')
         get_date = getDate()
         responses = responses + ' ' + get_date
+
     elif responses != '':
         responses = responses + "I'm Sorry I Can't Do That Yet"
-
     say(responses)
+    time.sleep(5)
